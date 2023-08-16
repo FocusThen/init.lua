@@ -2,7 +2,7 @@ require("focusthen.set")
 require("focusthen.remap")
 
 local augroup = vim.api.nvim_create_augroup
-local ThePrimeagenGroup = augroup('Focusthen', {})
+local Focusthen = augroup('Focusthen', {})
 
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
