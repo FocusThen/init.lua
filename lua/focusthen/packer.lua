@@ -74,4 +74,5 @@ return require('packer').startup(function(use)
   use("eandrju/cellular-automaton.nvim")
   use("laytan/cloak.nvim")
 
+  use('numToStr/Comment.nvim')
 end)
