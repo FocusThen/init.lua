@@ -1,5 +1,4 @@
 -- This file can be loaded by calling `lua require('plugins')` from your init.vim
-
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -84,6 +83,9 @@ return require('packer').startup(function(use)
   use("laytan/cloak.nvim")
 
   use('numToStr/Comment.nvim')
+  use('nvim-lualine/lualine.nvim')
+  use('m4xshen/autoclose.nvim')
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if packer_bootstrap then
