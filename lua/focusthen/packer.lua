@@ -52,7 +52,7 @@ return require('packer').startup(function(use)
   use("theprimeagen/refactoring.nvim")
   use("mbbill/undotree")
   use("tpope/vim-fugitive")
-  use("nvim-treesitter/nvim-treesitter-context");
+  -- use("nvim-treesitter/nvim-treesitter-context");
 
   use {
 	  'VonHeikemen/lsp-zero.nvim',
@@ -78,13 +78,16 @@ return require('packer').startup(function(use)
   }
 
   use("folke/zen-mode.nvim")
-  use("github/copilot.vim")
+  -- use("github/copilot.vim")
   use("eandrju/cellular-automaton.nvim")
   use("laytan/cloak.nvim")
 
   use('numToStr/Comment.nvim')
   use('nvim-lualine/lualine.nvim')
   use('m4xshen/autoclose.nvim')
+
+  use('mfussenegger/nvim-dap')
+  use('sbdchd/neoformat')
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

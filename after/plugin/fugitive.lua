@@ -4,8 +4,8 @@ local Focusthen_Fugitive = vim.api.nvim_create_augroup("Focusthen_Fugitive", {})
 
 local autocmd = vim.api.nvim_create_autocmd
 autocmd("BufWinEnter", {
-    group = Focusthen_Fugitive,
-    pattern = "*",
+  group = Focusthen_Fugitive,
+  pattern = "*",
     callback = function()
         if vim.bo.ft ~= "fugitive" then
             return

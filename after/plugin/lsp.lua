@@ -3,7 +3,6 @@ local lsp = require("lsp-zero")
 lsp.preset("recommended")
 
 lsp.ensure_installed({
-  'tsserver',
   'rust_analyzer',
 })
 
@@ -52,8 +51,17 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 end)
 
+
+require("lspconfig")["gdscript"].setup({
+    name = "godot",
+    cmd = vim.lsp.rpc.connect("127.0.0.1", "6005"),
+})
+
+
+
 lsp.setup()
 
 vim.diagnostic.config({
     virtual_text = true
 })
+
