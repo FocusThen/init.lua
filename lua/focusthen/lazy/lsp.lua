@@ -33,7 +33,7 @@ return {
         "ts_ls"
       },
       handlers = {
-        function(server_name)         -- default handler (optional)
+        function(server_name) -- default handler (optional)
           require("lspconfig")[server_name].setup {
             capabilities = capabilities
           }
@@ -61,7 +61,7 @@ return {
     cmp.setup({
       snippet = {
         expand = function(args)
-          require('luasnip').lsp_expand(args.body)           -- For `luasnip` users.
+          require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
         end,
       },
       mapping = cmp.mapping.preset.insert({
@@ -75,11 +75,16 @@ return {
       }),
       sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'luasnip' },         -- For luasnip users.
+        { name = 'luasnip' }, -- For luasnip users.
       }, {
-        { name = 'buffer' },
-      })
+        { name = "buffer" },
+      }),
+      completion = {
+        completeopt = 'menu,menuone,noinsert,noselect',
+      },
+      preselect = cmp.PreselectMode.None
     })
+
 
     vim.diagnostic.config({
       -- update_in_insert = true,
