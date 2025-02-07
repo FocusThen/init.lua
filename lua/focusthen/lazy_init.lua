@@ -15,3 +15,5 @@ require("lazy").setup({
     spec = "focusthen.lazy",
     change_detection = { notify = false }
 })
+
+ColorMyPencils("catppuccin")
