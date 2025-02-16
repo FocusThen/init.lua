@@ -8,7 +8,17 @@ return {
   },
 
   config = function()
-    require('telescope').setup({})
+    local actions = require('telescope.actions')
+
+    require('telescope').setup({
+      defaults = {
+        mappings = {
+          i = {
+            ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+          },
+        },
+      }
+    })
 
     local builtin = require('telescope.builtin')
     vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
