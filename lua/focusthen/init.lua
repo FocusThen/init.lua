@@ -12,6 +12,11 @@ function R(name)
   require("plenary.reload").reload_module(name)
 end
 
+function P(v)
+  print(vim.inspect(v))
+  return v
+end
+
 autocmd('TextYankPost', {
   group = yank_group,
   pattern = '*',
