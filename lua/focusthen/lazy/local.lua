@@ -1,5 +1,8 @@
 local local_plugins = {
-  { "top", dir = "~/personel/top", config = function() end }
+	{
+		"floaterminal",
+		dir = "~/personel/floaterminal.nvim",
+	},
 }
 
 return local_plugins
