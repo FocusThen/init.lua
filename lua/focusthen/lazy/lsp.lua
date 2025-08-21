@@ -31,6 +31,18 @@ return {
 			gopls = {},
 			rust_analyzer = {},
 			ts_ls = {},
+			omnisharp = {
+        capabilities = capabilities,
+				cmd = { vim.fn.stdpath("data") .. "/mason/bin/omnisharp.cmd" },
+				enable_ms_build_load_projects_on_demand = false,
+				enable_editorconfig_support = true,
+				enable_roslyn_analysers = true,
+				enable_import_completion = true,
+				organize_imports_on_format = true,
+				enable_decompilation_support = true,
+				analyze_open_documents_only = false,
+				filetypes = { "cs", "vb", "csproj", "sln", "slnx", "props", "csx", "targets" },
+			},
 			lua_ls = {
 				settings = {
 					Lua = {
