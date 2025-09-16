@@ -32,7 +32,6 @@ return {
 			rust_analyzer = {},
 			ts_ls = {},
 			omnisharp = {
-        capabilities = capabilities,
 				cmd = { vim.fn.stdpath("data") .. "/mason/bin/omnisharp.cmd" },
 				enable_ms_build_load_projects_on_demand = false,
 				enable_editorconfig_support = true,
@@ -43,23 +42,7 @@ return {
 				analyze_open_documents_only = false,
 				filetypes = { "cs", "vb", "csproj", "sln", "slnx", "props", "csx", "targets" },
 			},
-			lua_ls = {
-				settings = {
-					Lua = {
-						completion = {
-							callSnippet = "Replace",
-						},
-						diagnostics = { disable = { "missing-fields" } },
-						workspace = {
-							checkThirdParty = false,
-							telemetry = { enable = false },
-							library = {
-								"${3rd}/love2d/library",
-							},
-						},
-					},
-				},
-			},
+			lua_ls = {},
 		}
 
 		local ensure_installed = vim.tbl_keys(servers or {})
@@ -75,7 +58,27 @@ return {
 				function(server_name)
 					local server = servers[server_name] or {}
 					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
+					if server_name == "lua_ls" then
+						require("lspconfig")[server_name].setup({
+							settings = {
+								Lua = {
+									completion = {
+										callSnippet = "Replace",
+									},
+									diagnostics = { disable = { "missing-fields", "lowercase-global" } },
+									workspace = {
+										checkThirdParty = false,
+										telemetry = { enable = false },
+										library = {
+											"${3rd}/love2d/library",
+										},
+									},
+								},
+							},
+						})
+					else
+						require("lspconfig")[server_name].setup(server)
+					end
 				end,
 			},
 		})
