@@ -10,6 +10,10 @@ local local_plugins = {
 	-- 		require("music-player").setup({})
 	-- 	end,
 	-- },
+	{
+		"OpenVpn",
+  	dir = "~/personel/vpn.nvim",
+  },
 }
 
 return local_plugins
