@@ -59,7 +59,7 @@ return {
 					local server = servers[server_name] or {}
 					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 					if server_name == "lua_ls" then
-						require("lspconfig")[server_name].setup({
+						vim.lsp.config[server_name].setup({
 							settings = {
 								Lua = {
 									completion = {
@@ -77,7 +77,7 @@ return {
 							},
 						})
 					else
-						require("lspconfig")[server_name].setup(server)
+						vim.lsp.config[server_name].setup(server)
 					end
 				end,
 			},
