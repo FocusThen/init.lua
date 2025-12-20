@@ -1,5 +1,15 @@
 return {
   "nvim-telescope/telescope.nvim",
+  cmd = "Telescope",
+  keys = {
+    { "<leader>pf", mode = "n" },
+    { "<C-p>", mode = "n" },
+    { "<leader>pws", mode = "n" },
+    { "<leader>pWs", mode = "n" },
+    { "<leader>ps", mode = "n" },
+    { "<leader>vh", mode = "n" },
+    { "<leader>sb", mode = "n" },
+  },
   dependencies = {
     "nvim-lua/plenary.nvim",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },

@@ -10,9 +10,19 @@ return {
 				},
 			},
 		},
-		{ "williamboman/mason.nvim", opts = {} },
-		"williamboman/mason-lspconfig.nvim",
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		{ 
+			"williamboman/mason.nvim",
+			cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
+			opts = {},
+		},
+		{ 
+			"williamboman/mason-lspconfig.nvim",
+			dependencies = { "williamboman/mason.nvim" },
+		},
+		{ 
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
+			event = "VeryLazy",
+		},
 		{ "j-hui/fidget.nvim", opts = {} },
 		"hrsh7th/cmp-nvim-lsp",
 	},
@@ -45,11 +55,17 @@ return {
 			lua_ls = {},
 		}
 
+		-- Defer mason-tool-installer to avoid blocking startup
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
 			"stylua", -- Used to format Lua code
 		})
-		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+		-- Install tools asynchronously after startup
+		vim.schedule(function()
+			pcall(function()
+				require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+			end)
+		end)
 
 		require("mason-lspconfig").setup({
 			ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)

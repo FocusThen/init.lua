@@ -30,7 +30,6 @@ return {
 			},
 
 			highlight = {
-				-- `false` will disable the whole extension
 				enable = true,
 				disable = function(lang, buf)
 					if lang == "html" then

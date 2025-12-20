@@ -28,5 +28,8 @@ vim.opt.termguicolors = true
 
 vim.opt.updatetime = 50
 
+-- Optimize shada (history) for faster startup
+vim.opt.shada = "!,'300,<50,@100,s10,h"
+
 --vim.opt.colorcolumn = "80"
 vim.g.neoformat_try_node_exe = 1
