@@ -1,13 +1,16 @@
 #!/bin/bash
 
-# Auto-push hook: Pushes root repo before nested repo is pushed
-# This hook runs before a push in the nested .config/nvim repo
+# Auto-push hook: Pushes root repo before submodule is pushed
+# This hook runs before a push in the .config/nvim submodule
 
-# Get the root of the nested repo (where this hook is located)
-NESTED_REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# Get the root of the submodule (where this hook is located)
+# Hook is at .githooks/pre-push, so go up 1 level to get submodule root
+# Get absolute path of the hook script
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+SUBMODULE_ROOT="$(cd "$HOOK_DIR/.." && pwd)"
 
-# Navigate to the root dev-env directory (3 levels up from .githooks)
-ROOT_REPO="$(cd "$NESTED_REPO_ROOT/../../.." && pwd)"
+# Navigate to the root dev-env directory (2 levels up from submodule root)
+ROOT_REPO="$(cd "$SUBMODULE_ROOT/../.." && pwd)"
 
 # Check if root repo exists and is a git repo
 if [ ! -d "$ROOT_REPO/.git" ]; then
@@ -23,19 +26,19 @@ CURRENT_BRANCH=$(git branch --show-current)
 REMOTE=$(git remote | head -n 1)
 
 if [ -z "$REMOTE" ]; then
-    # No remote configured, continue with nested repo push
+    # No remote configured, continue with submodule push
     exit 0
 fi
 
 # Check if there are commits to push
 if git rev-list --left-right "$REMOTE/$CURRENT_BRANCH"...HEAD 2>/dev/null | grep -q "^>"; then
-    echo "Pushing root repo first..."
+    echo "Pushing root repo first..." >&2
     git push "$REMOTE" "$CURRENT_BRANCH" 2>&1 | while IFS= read -r line; do
-        echo "  [root] $line"
+        echo "  [root] $line" >&2
     done
-    echo "✓ Root repo pushed, continuing with nested repo push..."
+    echo "✓ Root repo pushed, continuing with submodule push..." >&2
 fi
 
-# Always allow the nested repo push to continue
+# Always allow the submodule push to continue
 exit 0
 

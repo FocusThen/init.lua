@@ -1,46 +1,68 @@
 #!/bin/bash
 
-# Auto-commit hook: Commits nested repo changes to parent repo
-# This hook runs after a commit in the nested .config/nvim repo
+# Auto-commit hook: Commits submodule changes to parent repo
+# This hook runs after a commit in the .config/nvim submodule
 
-# Get the root of the nested repo (where this hook is located)
-NESTED_REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# Get the root of the submodule (where this hook is located)
+# Hook is at .githooks/post-commit, so go up 1 level to get submodule root
+# Get absolute path of the hook script
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+SUBMODULE_ROOT="$(cd "$HOOK_DIR/.." && pwd)"
 
-# Navigate to the root dev-env directory (3 levels up from .githooks)
-ROOT_REPO="$(cd "$NESTED_REPO_ROOT/../../.." && pwd)"
+# Navigate to the root dev-env directory (2 levels up from submodule root)
+ROOT_REPO="$(cd "$SUBMODULE_ROOT/../.." && pwd)"
 
 # Check if root repo exists and is a git repo
 if [ ! -d "$ROOT_REPO/.git" ]; then
-    echo "Warning: Root repo not found at $ROOT_REPO"
+    echo "Warning: Root repo not found at $ROOT_REPO" >&2
     exit 0
 fi
 
-# Get the commit message from the nested repo
+# Verify we're in the submodule
+cd "$SUBMODULE_ROOT" || exit 0
+
+# Get the commit message from the submodule
 COMMIT_MSG=$(git log -1 --pretty=%B)
 
-# Get the commit hash for reference
-COMMIT_HASH=$(git rev-parse --short HEAD)
+# Get the commit hash for reference (full hash)
+COMMIT_HASH_FULL=$(git rev-parse HEAD)
+COMMIT_HASH_SHORT=$(git rev-parse --short HEAD)
 
-# Navigate to root repo and stage the nested repo
+# Navigate to root repo
 cd "$ROOT_REPO" || exit 0
 
-# Check if there are any changes to commit
-if git diff --quiet --cached .config/nvim && git diff --quiet .config/nvim; then
-    # No changes, nothing to commit
+# Check if .config/nvim is actually a submodule
+if ! git ls-files --stage .config/nvim | grep -q "^160000"; then
+    echo "Warning: .config/nvim is not a submodule" >&2
     exit 0
 fi
 
-# Stage the nested repo directory
+# Get the current submodule commit hash in the parent repo
+CURRENT_SUBMODULE_HASH=$(git ls-tree HEAD:.config/nvim 2>/dev/null | awk '{print $3}')
+
+# Compare with the new commit hash (use full hash for comparison)
+if [ "$CURRENT_SUBMODULE_HASH" = "$COMMIT_HASH_FULL" ]; then
+    # Submodule reference is already up to date
+    exit 0
+fi
+
+# Stage the submodule (this updates the submodule reference)
 git add .config/nvim
 
-# Create a commit message that references the nested commit
-git commit -m "chore: update nvim config
+# Check if there's actually something staged
+if git diff --cached --quiet .config/nvim; then
+    # Nothing to commit
+    exit 0
+fi
 
-Auto-committed from nested repo commit: $COMMIT_HASH
+# Create a commit message that references the submodule commit
+git commit -m "chore: update nvim submodule
+
+Auto-committed from submodule commit: $COMMIT_HASH_SHORT
 $COMMIT_MSG" || {
     # If commit fails (e.g., nothing to commit), that's okay
     exit 0
 }
 
-echo "✓ Auto-committed to root repo: $COMMIT_HASH"
+echo "✓ Auto-committed submodule update to root repo: $COMMIT_HASH_SHORT" >&2
 
