@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Auto-push hook: Pushes root repo before nested repo is pushed
+# This hook runs before a push in the nested .config/nvim repo
+
+# Get the root of the nested repo (where this hook is located)
+NESTED_REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+
+# Navigate to the root dev-env directory (3 levels up from .githooks)
+ROOT_REPO="$(cd "$NESTED_REPO_ROOT/../../.." && pwd)"
+
+# Check if root repo exists and is a git repo
+if [ ! -d "$ROOT_REPO/.git" ]; then
+    # If root repo doesn't exist, continue with the push
+    exit 0
+fi
+
+# Navigate to root repo
+cd "$ROOT_REPO" || exit 0
+
+# Check if there are unpushed commits
+CURRENT_BRANCH=$(git branch --show-current)
+REMOTE=$(git remote | head -n 1)
+
+if [ -z "$REMOTE" ]; then
+    # No remote configured, continue with nested repo push
+    exit 0
+fi
+
+# Check if there are commits to push
+if git rev-list --left-right "$REMOTE/$CURRENT_BRANCH"...HEAD 2>/dev/null | grep -q "^>"; then
+    echo "Pushing root repo first..."
+    git push "$REMOTE" "$CURRENT_BRANCH" 2>&1 | while IFS= read -r line; do
+        echo "  [root] $line"
+    done
+    echo "✓ Root repo pushed, continuing with nested repo push..."
+fi
+
+# Always allow the nested repo push to continue
+exit 0
+

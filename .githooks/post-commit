@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Auto-commit hook: Commits nested repo changes to parent repo
+# This hook runs after a commit in the nested .config/nvim repo
+
+# Get the root of the nested repo (where this hook is located)
+NESTED_REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+
+# Navigate to the root dev-env directory (3 levels up from .githooks)
+ROOT_REPO="$(cd "$NESTED_REPO_ROOT/../../.." && pwd)"
+
+# Check if root repo exists and is a git repo
+if [ ! -d "$ROOT_REPO/.git" ]; then
+    echo "Warning: Root repo not found at $ROOT_REPO"
+    exit 0
+fi
+
+# Get the commit message from the nested repo
+COMMIT_MSG=$(git log -1 --pretty=%B)
+
+# Get the commit hash for reference
+COMMIT_HASH=$(git rev-parse --short HEAD)
+
+# Navigate to root repo and stage the nested repo
+cd "$ROOT_REPO" || exit 0
+
+# Check if there are any changes to commit
+if git diff --quiet --cached .config/nvim && git diff --quiet .config/nvim; then
+    # No changes, nothing to commit
+    exit 0
+fi
+
+# Stage the nested repo directory
+git add .config/nvim
+
+# Create a commit message that references the nested commit
+git commit -m "chore: update nvim config
+
+Auto-committed from nested repo commit: $COMMIT_HASH
+$COMMIT_MSG" || {
+    # If commit fails (e.g., nothing to commit), that's okay
+    exit 0
+}
+
+echo "✓ Auto-committed to root repo: $COMMIT_HASH"
+
