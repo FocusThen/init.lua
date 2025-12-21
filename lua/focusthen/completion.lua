@@ -54,16 +54,6 @@ cmp.setup({
 		end,
 	},
 
-	formatting = {
-		fields = { "abbr", "kind", "menu" },
-		expandable_indicator = true,
-		format = function(entry, vim_item)
-			vim_item = kind_formatter(entry, vim_item)
-			vim_item = require("tailwindcss-colorizer-cmp").formatter(entry, vim_item)
-			return vim_item
-		end,
-	},
-
 	sorting = {
 		priority_weight = 2,
 		comparators = {

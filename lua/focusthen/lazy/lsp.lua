@@ -10,18 +10,17 @@ return {
 				},
 			},
 		},
-		{ 
+		{
 			"williamboman/mason.nvim",
 			cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
 			opts = {},
 		},
-		{ 
+		{
 			"williamboman/mason-lspconfig.nvim",
 			dependencies = { "williamboman/mason.nvim" },
 		},
-		{ 
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
-			event = "VeryLazy",
+		{
+			"WhoIsSethDaniel/mason-tool-installer.nvim"
 		},
 		{ "j-hui/fidget.nvim", opts = {} },
 		"hrsh7th/cmp-nvim-lsp",
@@ -37,9 +36,7 @@ return {
 		)
 
 		local servers = {
-			clangd = {},
-			gopls = {},
-			rust_analyzer = {},
+			lua_ls = {},
 			ts_ls = {},
 			omnisharp = {
 				cmd = { vim.fn.stdpath("data") .. "/mason/bin/omnisharp.cmd" },
@@ -52,7 +49,6 @@ return {
 				analyze_open_documents_only = false,
 				filetypes = { "cs", "vb", "csproj", "sln", "slnx", "props", "csx", "targets" },
 			},
-			lua_ls = {},
 		}
 
 		-- Defer mason-tool-installer to avoid blocking startup
