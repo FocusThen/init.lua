@@ -50,7 +50,7 @@ autocmd("LspAttach", {
 		vim.keymap.set("n", "<leader>vd", function()
 			vim.diagnostic.open_float()
 		end, opts)
-		vim.keymap.set({"n", "v"}, "<leader>vca", function()
+		vim.keymap.set("n", "<leader>vca", function()
 			vim.lsp.buf.code_action()
 		end, opts)
 		vim.keymap.set("n", "<leader>vrr", function()
@@ -68,6 +68,7 @@ autocmd("LspAttach", {
 		vim.keymap.set("n", "]d", function()
 			vim.diagnostic.goto_prev()
 		end, opts)
+		require("lsp_signature").on_attach({}, opts.buffer)
 	end,
 })
 
