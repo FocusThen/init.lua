@@ -1,11 +1,7 @@
 return {
   "nvim-telescope/telescope.nvim",
-  cmd = "Telescope",
-  event = "LspAttach",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-    -- "nvim-telescope/telescope-smart-history.nvim",
     "nvim-telescope/telescope-ui-select.nvim",
   },
 
@@ -29,9 +25,6 @@ return {
       },
     })
 
-    -- Enable Telescope extensions if they are installed
-    pcall(require("telescope").load_extension, "fzf")
-    -- pcall(require("telescope").load_extension, "smart_history")
     pcall(require("telescope").load_extension, "ui-select")
 
     local builtin = require("telescope.builtin")
