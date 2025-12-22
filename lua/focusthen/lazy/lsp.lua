@@ -26,6 +26,8 @@ return {
 			vim.lsp.protocol.make_client_capabilities(),
 			cmp_lsp.default_capabilities()
 		)
+		-- Ensure snippet support is enabled
+		capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 		require("fidget").setup({})
 		require("mason").setup()
@@ -36,17 +38,7 @@ return {
 				"gopls",
 				"vtsls",
 				"tailwindcss",
-				omnisharp = {
-					cmd = { vim.fn.stdpath("data") .. "/mason/bin/omnisharp.cmd" },
-					enable_ms_build_load_projects_on_demand = false,
-					enable_editorconfig_support = true,
-					enable_roslyn_analysers = true,
-					enable_import_completion = true,
-					organize_imports_on_format = true,
-					enable_decompilation_support = true,
-					analyze_open_documents_only = false,
-					filetypes = { "cs", "vb", "csproj", "sln", "slnx", "props", "csx", "targets" },
-				},
+				"omnisharp",
 			},
 			handlers = {
 				function(server_name) -- default handler (optional)
@@ -107,6 +99,28 @@ return {
 						},
 					})
 				end,
+				["omnisharp"] = function()
+					local lspconfig = require("lspconfig")
+					lspconfig.omnisharp.setup({
+						capabilities = capabilities,
+						settings = {
+							OmniSharp = {
+								enableMsBuildLoadProjectsOnDemand = false,
+								enableEditorConfigSupport = true,
+								enableRoslynAnalyzers = true,
+								enableImportCompletion = true,
+								organizeImportsOnFormat = true,
+								enableDecompilationSupport = true,
+								analyzeOpenDocumentsOnly = false,
+							},
+						},
+						filetypes = { "cs", "vb", "csproj", "sln", "slnx", "props", "csx", "targets" },
+						on_attach = function(client, bufnr)
+							-- Enable completion triggered by <c-x><c-o>
+							vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+						end,
+					})
+				end,
 			},
 		})
 
@@ -132,10 +146,10 @@ return {
 			sources = cmp.config.sources({
 				{ name = "copilot", group_index = 2 },
 				{ name = "nvim_lsp" },
-				{ name = "luasnip" }, -- For luasnip users.
+				{ name = "luasnip", priority = 1000 }, -- Prioritize snippets for keywords
 				{ name = "path" },
 			}, {
-				{ name = "buffer" },
+				{ name = "buffer", keyword_length = 2 }, -- Buffer completion for keywords
 			}),
 			sorting = {
 				priority_weight = 2,
