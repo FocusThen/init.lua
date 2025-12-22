@@ -68,7 +68,6 @@ autocmd("LspAttach", {
 		vim.keymap.set("n", "]d", function()
 			vim.diagnostic.goto_prev()
 		end, opts)
-		require("lsp_signature").on_attach({}, opts.buffer)
 	end,
 })
 
