@@ -14,26 +14,8 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     spec = "focusthen.lazy",
     change_detection = { notify = false },
-    performance = {
-        rtp = {
-            disabled_plugins = {
-                "gzip",
-                "matchit",
-                "matchparen",
-                "netrwPlugin",
-                "tarPlugin",
-                "tohtml",
-                "tutor",
-                "zipPlugin",
-                "man",
-                "spellfile",
-                "rplugin",
-            },
-        },
-    },
 })
 
--- Defer colorscheme loading until after UI is ready (faster startup)
 vim.api.nvim_create_autocmd("UIEnter", {
     once = true,
     callback = function()

@@ -17,6 +17,12 @@ function P(v)
 	return v
 end
 
+vim.filetype.add({
+    extension = {
+        templ = 'templ',
+    }
+})
+
 autocmd("TextYankPost", {
 	group = yank_group,
 	pattern = "*",
@@ -68,7 +74,6 @@ autocmd("LspAttach", {
 		vim.keymap.set("n", "]d", function()
 			vim.diagnostic.goto_prev()
 		end, opts)
-		require("lsp_signature").on_attach({}, opts.buffer)
 	end,
 })
 
