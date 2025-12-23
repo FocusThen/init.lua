@@ -36,6 +36,7 @@ return {
                 "gopls",
                 "vtsls",
                 "tailwindcss",
+                "omnisharp",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -97,10 +98,15 @@ return {
                     require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
                 end,
             },
+            completion = { completeopt = "menu,menuone,noinsert" },
+            preselect = cmp.PreselectMode.None,
             mapping = cmp.mapping.preset.insert({
-                ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+                ["<C-f>"] = cmp.mapping.scroll_docs(4),
+                ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
+                ["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
+                ["<C-y>"] = cmp.mapping.confirm({ select = true }),
+                ["<CR>"] = cmp.mapping.confirm({ select = true }),
                 ["<C-Space>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
@@ -108,7 +114,23 @@ return {
                 { name = 'luasnip' }, -- For luasnip users.
             }, {
                 { name = 'buffer' },
-            })
+            }),
+            sorting = {
+                priority_weight = 2,
+                comparators = {
+                    -- Below is the default comparitor list and order for nvim-cmp
+                    cmp.config.compare.offset,
+                    -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+                    cmp.config.compare.exact,
+                    cmp.config.compare.score,
+                    cmp.config.compare.recently_used,
+                    cmp.config.compare.locality,
+                    cmp.config.compare.kind,
+                    cmp.config.compare.sort_text,
+                    cmp.config.compare.length,
+                    cmp.config.compare.order,
+                },
+            },
         })
 
         vim.diagnostic.config({
