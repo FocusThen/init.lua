@@ -37,9 +37,3 @@ vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/dev-env/.config/nvim/lua/focusthen/
 vim.keymap.set("n", "<leader><leader>", function()
   vim.cmd("so")
 end)
-
-
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-

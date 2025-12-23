@@ -15,10 +15,3 @@ require("lazy").setup({
     spec = "focusthen.lazy",
     change_detection = { notify = false },
 })
-
-vim.api.nvim_create_autocmd("UIEnter", {
-    once = true,
-    callback = function()
-        ColorMyPencils("catppuccin")
-    end,
-})
