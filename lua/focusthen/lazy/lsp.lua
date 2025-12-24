@@ -13,12 +13,33 @@ return {
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    "j-hui/fidget.nvim"
   },
   config = function()
     require("mason").setup()
+    require("fidget").setup({})
+    
     local servers = {
       lua_ls = {},
-      omnisharp = {},
+      omnisharp = {
+        settings = {
+          FormattingOptions = {
+            EnableEditorConfigSupport = true,
+            OrganizeImports = true,
+          },
+          MsBuild = {
+            LoadProjectsOnDemand = true,
+          },
+          RoslynExtensionsOptions = {
+            EnableAnalyzersSupport = true,
+            EnableImportCompletion = true,
+            AnalyzeOpenDocumentsOnly = true,
+          },
+          Sdk = {
+            IncludePrereleases = true,
+          },
+        },
+      },
       ols = {},
       zls = {},
       clangd = {},
@@ -27,17 +48,29 @@ return {
       html = {},
       rust_analyzer = {}
     }
+    
     local ensure_installed = vim.tbl_keys(servers or {})
     require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-    require("mason-lspconfig").setup()
-    for _, server in ipairs(ensure_installed) do
-      vim.lsp.enable(server)
-    end
+    require("mason-lspconfig").setup({
+      automatic_installation = true,
+    })
 
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
     vim.lsp.config("*", {
       capabilities = capabilities,
     })
+
+    -- Configure server-specific settings
+    for server_name, server_config in pairs(servers) do
+      if next(server_config) ~= nil then
+        vim.lsp.config(server_name, server_config)
+      end
+    end
+
+    -- Enable all LSP servers
+    for server_name, _ in pairs(servers) do
+      vim.lsp.enable(server_name)
+    end
 
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("Focusthen", {}),
