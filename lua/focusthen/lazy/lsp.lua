@@ -16,7 +16,11 @@ return {
     "j-hui/fidget.nvim"
   },
   config = function()
-    require("mason").setup()
+    require("mason").setup({
+      ui = {
+        check_outdated_packages_on_open = false,
+      },
+    })
     require("fidget").setup({})
     
     local servers = {
@@ -50,10 +54,17 @@ return {
     }
     
     local ensure_installed = vim.tbl_keys(servers or {})
-    require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+    require("mason-tool-installer").setup({ 
+      ensure_installed = ensure_installed,
+      run_on_start = false,
+    })
     require("mason-lspconfig").setup({
       automatic_installation = true,
     })
+    
+    vim.defer_fn(function()
+      require("mason-tool-installer").check_install()
+    end, 1000)
 
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
     vim.lsp.config("*", {
