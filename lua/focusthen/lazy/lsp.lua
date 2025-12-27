@@ -22,7 +22,7 @@ return {
       },
     })
     require("fidget").setup({})
-    
+
     local servers = {
       lua_ls = {},
       omnisharp = {
@@ -52,16 +52,16 @@ return {
       html = {},
       rust_analyzer = {}
     }
-    
+
     local ensure_installed = vim.tbl_keys(servers or {})
-    require("mason-tool-installer").setup({ 
+    require("mason-tool-installer").setup({
       ensure_installed = ensure_installed,
       run_on_start = false,
     })
     require("mason-lspconfig").setup({
       automatic_installation = true,
     })
-    
+
     vim.defer_fn(function()
       require("mason-tool-installer").check_install()
     end, 1000)
@@ -99,7 +99,7 @@ return {
         vim.keymap.set("n", "<leader>vd", function()
           vim.diagnostic.open_float()
         end, opts)
-        vim.keymap.set("n", "<leader>ca", function()
+        vim.keymap.set({ "n", "v" }, "<leader>ca", function()
           vim.lsp.buf.code_action()
         end, opts)
         vim.keymap.set("n", "<leader>rr", function()
