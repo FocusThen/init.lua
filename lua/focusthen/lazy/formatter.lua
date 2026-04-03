@@ -2,34 +2,37 @@ return {
   "mhartington/formatter.nvim",
   cmd = { "Format", "FormatWrite" },
   keys = {
-    { "<leader>s", "<cmd>Format<CR>", mode = { "n", "v" }, desc = "Format with formatter.nvim" },
+    { "<leader><leader>", "<cmd>Format<CR>", mode = { "n", "v" }, desc = "Format buffer (oxfmt)" },
   },
   config = function()
     local util = require("formatter.util")
-    
-    local prettier_formatter = function(parser)
+
+    local function resolve_oxfmt_exe()
+      local bufname = vim.api.nvim_buf_get_name(0)
+      local start = bufname ~= "" and vim.fs.dirname(vim.fn.fnamemodify(bufname, ":p")) or vim.fn.getcwd()
+      start = vim.fs.normalize(vim.fn.fnamemodify(start, ":p")) .. "/"
+      for dir in vim.fs.parents(start) do
+        local candidate = dir .. "/node_modules/.bin/oxfmt"
+        if vim.fn.filereadable(candidate) == 1 or vim.fn.executable(candidate) == 1 then
+          return vim.fn.resolve(candidate)
+        end
+      end
+      local global = vim.fn.exepath("oxfmt")
+      return global ~= "" and global or "oxfmt"
+    end
+
+    local oxfmt_formatter = function()
       return function()
         local file_path = util.get_current_buffer_file_path()
         if not file_path or file_path == "" then
           return nil
         end
-        
+
         local abs_path = vim.fn.fnamemodify(file_path, ":p")
-        local args = {
-          "--stdin-filepath",
-          abs_path,
-        }
-        
-        if parser then
-          table.insert(args, "--parser")
-          table.insert(args, parser)
-        end
-        
         return {
-          exe = "prettier",
-          args = args,
+          exe = resolve_oxfmt_exe(),
+          args = { "--stdin-filepath", abs_path },
           stdin = true,
-          try_node_modules = true,
         }
       end
     end
@@ -38,20 +41,20 @@ return {
       logging = true,
       log_level = vim.log.levels.WARN,
       filetype = {
-        html = prettier_formatter(),
-        json = prettier_formatter(),
-        jsonc = prettier_formatter(),
-        css = prettier_formatter(),
-        javascript = prettier_formatter(),
-        typescript = prettier_formatter(),
-        tsx = prettier_formatter("typescript"),
-        typescriptreact = prettier_formatter("typescript"),
-        javascriptreact = prettier_formatter(),
+        html = oxfmt_formatter(),
+        json = oxfmt_formatter(),
+        jsonc = oxfmt_formatter(),
+        css = oxfmt_formatter(),
+        javascript = oxfmt_formatter(),
+        typescript = oxfmt_formatter(),
+        tsx = oxfmt_formatter(),
+        typescriptreact = oxfmt_formatter(),
+        javascriptreact = oxfmt_formatter(),
         cs = {
           require("formatter.filetypes.cs").clangformat,
         },
         lua = {
-          require("formatter.filetypes.lua").stylua,
+          require("formatter.filetypes.lua").luafmt,
         },
         go = {
           require("formatter.filetypes.go").gofmt,
@@ -60,3 +63,4 @@ return {
     })
   end,
 }
+

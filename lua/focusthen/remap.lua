@@ -34,6 +34,6 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/dev-env/.config/nvim/lua/focusthen/init.lua<CR>");
 
-vim.keymap.set("n", "<leader><leader>", function()
-  vim.cmd("so")
-end)
+-- vim.keymap.set("n", "<leader><leader>", function()
+--   vim.cmd("so")
+-- end)
