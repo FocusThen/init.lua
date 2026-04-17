@@ -48,7 +48,6 @@ return {
       zls = {},
       clangd = {},
       jsonls = {},
-      ts_ls = {},
       html = {},
       rust_analyzer = {}
     }

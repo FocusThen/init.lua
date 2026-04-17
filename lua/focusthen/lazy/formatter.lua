@@ -2,7 +2,7 @@ return {
   "mhartington/formatter.nvim",
   cmd = { "Format", "FormatWrite" },
   keys = {
-    { "<leader><leader>", "<cmd>Format<CR>", mode = { "n", "v" }, desc = "Format buffer (oxfmt)" },
+    { "<leader><leader>", "<cmd>Format<CR>", mode = { "n", "v" }, desc = "Format buffer" },
   },
   config = function()
     local util = require("formatter.util")
@@ -37,6 +37,16 @@ return {
       end
     end
 
+    local function odinfmt_formatter()
+      return function()
+        return {
+          exe = "odinfmt",
+          args = { "-stdin" },
+          stdin = true,
+        }
+      end
+    end
+
     require("formatter").setup({
       logging = true,
       log_level = vim.log.levels.WARN,
@@ -50,6 +60,12 @@ return {
         tsx = oxfmt_formatter(),
         typescriptreact = oxfmt_formatter(),
         javascriptreact = oxfmt_formatter(),
+        c = {
+          require("formatter.filetypes.c").clangformat,
+        },
+        cpp = {
+          require("formatter.filetypes.cpp").clangformat,
+        },
         cs = {
           require("formatter.filetypes.cs").clangformat,
         },
@@ -58,6 +74,18 @@ return {
         },
         go = {
           require("formatter.filetypes.go").gofmt,
+        },
+        elixir = {
+          require("formatter.filetypes.elixir").mixformat,
+        },
+        ocaml = {
+          require("formatter.filetypes.ocaml").ocamlformat,
+        },
+        odin = {
+          odinfmt_formatter(),
+        },
+        rust = {
+          require("formatter.filetypes.rust").rustfmt,
         },
       },
     })
