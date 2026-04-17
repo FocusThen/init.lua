@@ -16,6 +16,8 @@ return {
 					"c_sharp",
 					"json",
 					"html",
+					"swift",
+					"zig",
 				},
 				sync_install = false,
 				auto_install = true,

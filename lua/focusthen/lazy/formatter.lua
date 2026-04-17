@@ -47,6 +47,23 @@ return {
       end
     end
 
+    local function swiftformat_formatter()
+      return function()
+        local file_path = util.get_current_buffer_file_path()
+        if not file_path or file_path == "" then
+          return {
+            exe = "swiftformat",
+            stdin = true,
+          }
+        end
+        return {
+          exe = "swiftformat",
+          args = { "--stdinpath", util.escape_path(vim.fn.fnamemodify(file_path, ":p")) },
+          stdin = true,
+        }
+      end
+    end
+
     require("formatter").setup({
       logging = true,
       log_level = vim.log.levels.WARN,
@@ -86,6 +103,12 @@ return {
         },
         rust = {
           require("formatter.filetypes.rust").rustfmt,
+        },
+        swift = {
+          swiftformat_formatter(),
+        },
+        zig = {
+          require("formatter.filetypes.zig").zigfmt,
         },
       },
     })

@@ -47,12 +47,21 @@ return {
       ols = {},
       zls = {},
       clangd = {},
+      -- Ships with Xcode; restrict filetypes so clangd keeps C/C++.
+      sourcekit = {
+        filetypes = { "swift", "objc", "objcpp" },
+      },
       jsonls = {},
       html = {},
       rust_analyzer = {}
     }
 
-    local ensure_installed = vim.tbl_keys(servers or {})
+    local ensure_installed = {}
+    for name in pairs(servers or {}) do
+      if name ~= "sourcekit" then
+        ensure_installed[#ensure_installed + 1] = name
+      end
+    end
     require("mason-tool-installer").setup({
       ensure_installed = ensure_installed,
       run_on_start = false,
