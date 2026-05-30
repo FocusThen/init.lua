@@ -87,7 +87,7 @@ return {
           require("formatter.filetypes.cs").clangformat,
         },
         lua = {
-          require("formatter.filetypes.lua").luafmt,
+          require("formatter.filetypes.lua").stylua,
         },
         go = {
           require("formatter.filetypes.go").gofmt,

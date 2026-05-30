@@ -33,7 +33,6 @@ return {
       },
       extensions = {
         wrap_results = true,
-        fzf = {},
         ["ui-select"] = {
           require("telescope.themes").get_dropdown({}),
         },
