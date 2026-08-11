@@ -21,6 +21,26 @@ return {
       return global ~= "" and global or "oxfmt"
     end
 
+    -- oxfmt defaults are Prettier's: double quotes and semicolons. Projects that
+    -- ship their own config keep winning; only config-less projects fall back to
+    -- the personal defaults below.
+    local OXFMT_CONFIG_NAMES = {
+      ".oxfmtrc.json",
+      ".oxfmtrc.jsonc",
+      "oxfmt.config.ts",
+      "oxfmt.config.mts",
+    }
+    local GLOBAL_OXFMT_CONFIG = vim.fn.expand("~/.config/oxfmt/oxfmtrc.json")
+
+    local function has_project_oxfmt_config(abs_path)
+      local found = vim.fs.find(OXFMT_CONFIG_NAMES, {
+        upward = true,
+        type = "file",
+        path = vim.fs.dirname(abs_path),
+      })
+      return found[1] ~= nil
+    end
+
     local oxfmt_formatter = function()
       return function()
         local file_path = util.get_current_buffer_file_path()
@@ -29,9 +49,15 @@ return {
         end
 
         local abs_path = vim.fn.fnamemodify(file_path, ":p")
+        local args = { "--stdin-filepath", abs_path }
+
+        if not has_project_oxfmt_config(abs_path) and vim.fn.filereadable(GLOBAL_OXFMT_CONFIG) == 1 then
+          vim.list_extend(args, { "--config", GLOBAL_OXFMT_CONFIG })
+        end
+
         return {
           exe = resolve_oxfmt_exe(),
-          args = { "--stdin-filepath", abs_path },
+          args = args,
           stdin = true,
         }
       end
